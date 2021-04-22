@@ -39,6 +39,10 @@ class TestStartPage(BaseTest):
         error_message = driver.find_element(by=By.XPATH, value="//div[@class='alert alert-danger text-center']")
         assert error_message.text == r"Invalid username \ password"
 
+    def test_invalid_username(self, setup):
+        any_string = "Hello git"
+        assert "Hello git" == any_string
+
 # """1) Verify, the error messanges will be displayed if the [Sign up for OurApp] button is clicked"""
 # """
 #  - Click the SUBMIT button
