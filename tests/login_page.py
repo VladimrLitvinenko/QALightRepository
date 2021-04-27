@@ -25,6 +25,12 @@ class TestStartPage(BaseTest):
         driver.close()
 
     def test_validation_on_registration_section(self, setup):
+        """
+        - Click on the sign_up button on the registration section
+        - Assert text above 'username' field
+        - Assert text above 'email' field
+        - Assert text above 'password' field
+        """
         driver = setup
         sign_up_button = driver.find_element(By.XPATH, value="//button[@type='submit']")
         sign_up_button.click()
@@ -42,6 +48,14 @@ class TestStartPage(BaseTest):
         assert error_message_for_password.text == "Password must be at least 12 characters."
 
     def test_user_is_registered(self, setup):
+        """
+        - Set variables for 'User Name', 'email', 'password'
+        - Enter valid data into 'User Name' field
+        - Enter valid data into 'Email' field
+        - Enter valid data into 'Password' field
+        - Click SIGN UP button
+        - Assert that text of the success login is displyaed
+        """
         user_name = f"UserName{self.variety}"
         email = f"validemail{self.variety}@gmail.com"
         password = f"Vv{self.variety}vv"
@@ -65,6 +79,13 @@ class TestStartPage(BaseTest):
         assert text_after_successfull_registration.text == f"Hello {user_name.lower()}, your feed is empty."
 
     def test_user_is_logged_in(self, setup):
+        """
+        - Set variable for USER NAME with valid data
+        -  Enter current variable into the USER NAME field
+        - Enter Valid PASSWORD into the PASSWORD FIELD
+        - Click SIGN IN button
+        - Assert that USER MAME is displayed on the successful logged in page
+        """
         user_name = "ValidUsername6"
         driver = setup
 
@@ -83,6 +104,13 @@ class TestStartPage(BaseTest):
         assert text_after_successfull_registration.text == f"Hello {user_name.lower()}, your feed is empty."
 
     def test_log_out(self, setup):
+        """
+        - Enter valid USER NAME into the USER NAME field
+        - Enter Valid PASSWORD into the PASSWORD FIELD
+        - Click SIGN IN button
+        - Click LOG OUT button
+        - Assert the SIGN IN button is displayed after user is logged out
+        """
         user_name = "ValidUsername6"
         driver = setup
 
@@ -104,6 +132,10 @@ class TestStartPage(BaseTest):
         assert sign_in_button.text == "Sign In"
 
     def test_invalid_login(self, setup):
+        """
+        - Click SIGN IN button
+        - Assert validation message for SIGN IN section
+        """
         driver = setup
         sign_in_button = driver.find_element(By.XPATH, value="//button[contains(text(),'Sign In')]")
         sign_in_button.click()
