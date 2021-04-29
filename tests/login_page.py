@@ -39,6 +39,7 @@ class TestStartPage(BaseTest):
         start_page_obj.verify_error_for_username_field_on_SIGN_UP()
         start_page_obj.verify_error_for_email_field_on_SIGN_UP()
         start_page_obj.verify_error_for_password_field_on_SIGN_UP()
+        self.logger.info("all error messages for username, email and password fields are displayed for SIGN UP section")
 
     def test_user_is_registered(self, setup):
         """
@@ -56,9 +57,12 @@ class TestStartPage(BaseTest):
         # Set valid login, email, password
         start_page_obj.sign_up_user(username=username, email=f"validemail{self.variety}@gmail.com",
                                     password=f"Vv{self.variety}vv")
+        self.logger.info(f"Entered unique username = {username}, email and password into SIGN UP section")
 
         # Verify user is signed up successfully
         start_page_obj.verify_user_is_signed_up(username=username)
+        self.logger.info(
+            f"Verify  unique username = {username.lower()}, username is displayed after successful SIGN UP")
 
     def test_user_is_logged_in(self, setup):
         """
@@ -72,6 +76,8 @@ class TestStartPage(BaseTest):
         username = "ValidUsername6"
         start_page_obj.fill_sign_in_field(username=username, password="V123412341234v")
         start_page_obj.verify_user_is_signed_up(username=username.lower())
+        self.logger.info(
+            f"Verify  unique username = {username.lower()}, username is displayed after successful SIGN IN")
 
     def test_log_out(self, setup):
         """
@@ -84,6 +90,7 @@ class TestStartPage(BaseTest):
         start_page_obj = setup
         start_page_obj.fill_sign_in_field(username="ValidUsername6", password="V123412341234v")
         start_page_obj.log_out()
+        self.logger.info("Valid user is successfully login, THEN logged out")
 
     def test_invalid_login(self, setup):
         """
@@ -95,3 +102,4 @@ class TestStartPage(BaseTest):
         start_page_obj.fill_sign_in_field(username="", password="")
         # verify error message
         start_page_obj.verify_invalid_credentials()
+        self.logger.info("error message is verified for SIGN IN section")
