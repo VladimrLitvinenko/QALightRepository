@@ -8,6 +8,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 from conftest import BaseTest
+from constants import start_page_locators
+from pages.start_page import StartPage
 
 
 class TestStartPage(BaseTest):
@@ -18,7 +20,7 @@ class TestStartPage(BaseTest):
         driver = webdriver.Chrome(
             executable_path="/home/ihor/PycharmProjects/pythonQALightSelenium/drivers/chromedriver")
         driver.maximize_window()
-        driver.get("https://qa-complex-app-for-testing.herokuapp.com/")
+        driver.get(start_page_locators.START_PAGE_URLS)
         driver.implicitly_wait(time_to_wait=20)  # ждем пока найдет элемент
         yield driver
         driver.maximize_window()
@@ -32,20 +34,11 @@ class TestStartPage(BaseTest):
         - Assert text above 'password' field
         """
         driver = setup
-        sign_up_button = driver.find_element(By.XPATH, value="//button[@type='submit']")
-        sign_up_button.click()
-        time.sleep(2.4)
-
-        error_message_for_username = driver.find_element(By.XPATH,
-                                                         value="//div[text() = 'Username must be at least 3 characters.']")
-        error_message_for_email = driver.find_element(By.XPATH,
-                                                      value="//div[text() = 'You must provide a valid email address.']")
-        error_message_for_password = driver.find_element(By.XPATH,
-                                                         value="//div[text() = 'Password must be at least 12 characters.']")
-
-        assert error_message_for_username.text == "Username must be at least 3 characters."
-        assert error_message_for_email.text == "You must provide a valid email address."
-        assert error_message_for_password.text == "Password must be at least 12 characters."
+        start_page_obj = StartPage(driver)
+        start_page_obj.click_sign_up_button()
+        start_page_obj.verify_error_for_username_field_on_SIGN_UP()
+        start_page_obj.verify_error_for_email_field_on_SIGN_UP()
+        start_page_obj.verify_error_for_password_field_on_SIGN_UP()
 
     def test_user_is_registered(self, setup):
         """
@@ -56,27 +49,16 @@ class TestStartPage(BaseTest):
         - Click SIGN UP button
         - Assert that text of the success login is displyaed
         """
-        user_name = f"UserName{self.variety}"
-        email = f"validemail{self.variety}@gmail.com"
-        password = f"Vv{self.variety}vv"
         driver = setup
+        start_page_obj = StartPage(driver)
+        username = f"UserName{self.variety}"
 
-        user_name_field_sign_up = driver.find_element(By.XPATH, value="//input[@placeholder='Pick a username']")
-        user_name_field_sign_up.send_keys(user_name)
+        # Set valid login, email, password
+        start_page_obj.sign_up_user(username=username, email=f"validemail{self.variety}@gmail.com",
+                                    password=f"Vv{self.variety}vv")
 
-        valid_email_field_sign_up = driver.find_element(By.XPATH, value="//input[@placeholder='you@example.com']")
-        valid_email_field_sign_up.send_keys(email)
-
-        valid_password_field_sign_up = driver.find_element(By.XPATH, value="//input[@placeholder='Create a password']")
-        valid_password_field_sign_up.send_keys(password)
-
-        time.sleep(3)
-
-        sign_up_button = driver.find_element(By.XPATH, value="//*[@type='submit']")
-        sign_up_button.click()
-
-        text_after_successfull_registration = driver.find_element(By.XPATH, value="//h2")
-        assert text_after_successfull_registration.text == f"Hello {user_name.lower()}, your feed is empty."
+        # Verify user is signed up successfully
+        start_page_obj.verify_user_is_signed_up(username=username)
 
     def test_user_is_logged_in(self, setup):
         """
@@ -86,22 +68,11 @@ class TestStartPage(BaseTest):
         - Click SIGN IN button
         - Assert that USER MAME is displayed on the successful logged in page
         """
-        user_name = "ValidUsername6"
         driver = setup
-
-        user_name_field_login = driver.find_element(By.XPATH, value="//input[@placeholder='Username']")
-        user_name_field_login.clear()
-        user_name_field_login.send_keys(user_name)
-
-        user_password_field_login = driver.find_element(By.XPATH, value="//input[@placeholder='Password']")
-        user_password_field_login.clear()
-        user_password_field_login.send_keys("V123412341234v")
-
-        sign_in_button = driver.find_element(By.XPATH, value="//button[contains(text(),'Sign In')]")
-        sign_in_button.click()
-
-        text_after_successfull_registration = driver.find_element(By.XPATH, value="//h2")
-        assert text_after_successfull_registration.text == f"Hello {user_name.lower()}, your feed is empty."
+        start_page_obj = StartPage(driver)
+        username = "ValidUsername6"
+        start_page_obj.fill_sign_in_field(username=username, password="V123412341234v")
+        start_page_obj.verify_user_is_signed_up(username=username.lower())
 
     def test_log_out(self, setup):
         """
@@ -111,25 +82,10 @@ class TestStartPage(BaseTest):
         - Click LOG OUT button
         - Assert the SIGN IN button is displayed after user is logged out
         """
-        user_name = "ValidUsername6"
         driver = setup
-
-        user_name_field_login = driver.find_element(By.XPATH, value="//input[@placeholder='Username']")
-        user_name_field_login.clear()
-        user_name_field_login.send_keys(user_name)
-
-        user_password_field_login = driver.find_element(By.XPATH, value="//input[@placeholder='Password']")
-        user_password_field_login.clear()
-        user_password_field_login.send_keys("V123412341234v")
-
-        sign_in_button = driver.find_element(By.XPATH, value="//button[contains(text(),'Sign In')]")
-        sign_in_button.click()
-
-        log_out_button = driver.find_element(By.XPATH, value="//button[text()='Sign Out']")
-        log_out_button.click()
-
-        sign_in_button = driver.find_element(By.XPATH, value="//button[contains(text(),'Sign In')]")
-        assert sign_in_button.text == "Sign In"
+        start_page_obj = StartPage(driver)
+        start_page_obj.fill_sign_in_field(username="ValidUsername6", password="V123412341234v")
+        start_page_obj.log_out()
 
     def test_invalid_login(self, setup):
         """
@@ -137,8 +93,8 @@ class TestStartPage(BaseTest):
         - Assert validation message for SIGN IN section
         """
         driver = setup
-        sign_in_button = driver.find_element(By.XPATH, value="//button[contains(text(),'Sign In')]")
-        sign_in_button.click()
-        error_message_for_invalid_login = driver.find_element(By.XPATH,
-                                                              value="//div[contains(text(),'Invalid username \ password')]")
-        assert error_message_for_invalid_login.text == r"Invalid username \ password"
+        start_page_obj = StartPage(driver)
+        # передаем пустые строки в username и в password дабы вызвать эрор
+        start_page_obj.fill_sign_in_field(username="", password="")
+        # verify error message
+        start_page_obj.verify_invalid_credentials()
