@@ -22,7 +22,8 @@ class TestStartPage(BaseTest):
         driver.maximize_window()
         driver.get(start_page_locators.START_PAGE_URLS)
         driver.implicitly_wait(time_to_wait=20)  # ждем пока найдет элемент
-        yield driver
+        start_page_obj = StartPage(driver)
+        yield start_page_obj
         driver.maximize_window()
         driver.close()
 
@@ -33,8 +34,7 @@ class TestStartPage(BaseTest):
         - Assert text above 'email' field
         - Assert text above 'password' field
         """
-        driver = setup
-        start_page_obj = StartPage(driver)
+        start_page_obj = setup
         start_page_obj.click_sign_up_button()
         start_page_obj.verify_error_for_username_field_on_SIGN_UP()
         start_page_obj.verify_error_for_email_field_on_SIGN_UP()
@@ -49,8 +49,8 @@ class TestStartPage(BaseTest):
         - Click SIGN UP button
         - Assert that text of the success login is displyaed
         """
-        driver = setup
-        start_page_obj = StartPage(driver)
+
+        start_page_obj = setup
         username = f"UserName{self.variety}"
 
         # Set valid login, email, password
@@ -68,8 +68,7 @@ class TestStartPage(BaseTest):
         - Click SIGN IN button
         - Assert that USER MAME is displayed on the successful logged in page
         """
-        driver = setup
-        start_page_obj = StartPage(driver)
+        start_page_obj = setup
         username = "ValidUsername6"
         start_page_obj.fill_sign_in_field(username=username, password="V123412341234v")
         start_page_obj.verify_user_is_signed_up(username=username.lower())
@@ -82,8 +81,7 @@ class TestStartPage(BaseTest):
         - Click LOG OUT button
         - Assert the SIGN IN button is displayed after user is logged out
         """
-        driver = setup
-        start_page_obj = StartPage(driver)
+        start_page_obj = setup
         start_page_obj.fill_sign_in_field(username="ValidUsername6", password="V123412341234v")
         start_page_obj.log_out()
 
@@ -92,8 +90,7 @@ class TestStartPage(BaseTest):
         - Click SIGN IN button
         - Assert validation message for SIGN IN section
         """
-        driver = setup
-        start_page_obj = StartPage(driver)
+        start_page_obj = setup
         # передаем пустые строки в username и в password дабы вызвать эрор
         start_page_obj.fill_sign_in_field(username="", password="")
         # verify error message
